@@ -3,8 +3,8 @@ class PagesController < ApplicationController
   end
 
   def get
+    @outstr_pokemon = ""
     @outstr_terry = ""
-    @outstr_terry_csv = ""
 
     # 各種サイトのチェックに応じてデータを持ってくる
     if params["pokemon"]
@@ -14,6 +14,10 @@ class PagesController < ApplicationController
       @result_pokemon = Nokogiri::HTML.parse(@html, nil, @charset)
       # 解析オブジェクトから必要な情報を抽出
       get_info_pokemon(@result_pokemon)
+      # ファイルを作成
+      f = File.open('./app/assets/pokemon.txt', 'w')
+      f.puts @outstr_pokemon
+      f.close
 
     end
 
@@ -24,10 +28,12 @@ class PagesController < ApplicationController
       @result_terry = Nokogiri::HTML.parse(@html, nil, @charset)
       # 解析オブジェクトから必要な情報を抽出
       get_info_terry(@result_terry)
+      # ファイルを作成
+      f = File.open('./app/assets/terry.txt', 'w')
+      f.puts @outstr_terry
+      f.close
 
     end
-
-    @outstr_terry_csv = @outstr_terry.gsub(/:|or/,",")
 
   end
 
@@ -52,14 +58,13 @@ class PagesController < ApplicationController
     end
 
     def get_info_pokemon(result)
-      puts result
-      #result.xpath('//div[@id="list01"]/table/tr/td[@class="i"]/..').each do |node|
-
-      #end
+      @outstr_pokemon = "ポケモン名　通常わざ：ゲージわざ　　"
+      result.xpath('//div[@class="post-content"]/table[1]/tbody').each do |node|
+        @outstr_pokemon = @outstr_pokemon + "\n\n" + node.xpath('tr/td[1]/a').inner_text + "　" + node.xpath('tr[1]/td[3]/a').inner_text + "：" + node.xpath('tr[1]/td[4]/a').inner_text
+      end
     end
 
     def get_info_terry(result)
-      counter = 0
       @outstr_terry = "配合先:（素材１＋素材２）　　"
       for i in 3..12 do
         for j in 1..100 do
@@ -86,7 +91,7 @@ class PagesController < ApplicationController
       end
 
       @outstr_terry.gsub(/（＋）/,"")
-      puts @outstr_terry
+
     end
 
 end
