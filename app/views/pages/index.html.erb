@@ -1,0 +1,10 @@
+<h1>ポケモンＧＯまたはテリワンＳＰのデータをとってくる</h1>
+<%= form_with method: :get, url: pages_get_path do |form| %>
+  <%= check_box_tag "pokemon", true, true, {:class => "output_genre"}  %><%= label_tag("pokemon", 'ポケモンＧＯ', class:"output_genre_text") %>
+  <%= check_box_tag "terry", true, true, {:class => "output_genre"}  %><%= label_tag("terry", 'テリワン', class:"output_genre_text") %>
+  <br>
+  <%= check_box_tag "textfile", true, true, {:class => "output_file"}  %><%= label_tag("textfile", 'テキスト出力', class:"output_file_text") %>
+  <%= check_box_tag "csvfile", true, true, {:class => "output_file"}  %><%= label_tag("csvfile", 'CSV出力', class:"output_file_text") %>
+  <br>
+  <%= form.submit("出力する", class: "output_btn", data: { disable_with: '出力中...' } ) %>
+<% end %>
